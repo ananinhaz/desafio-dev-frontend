@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Button, Card, CardContent, Grid, Typography, Box } from "@mui/material";
 import { FaHeart, FaTemperatureHigh, FaTemperatureLow, FaThermometerHalf } from "react-icons/fa"; 
 import { buscarClima } from "../services/climaApi"; 
@@ -12,7 +12,7 @@ const CidadesFavoritas: React.FC<CidadesFavoritasProps> = ({ favoritos, setFavor
   const [dadosClimaFavoritos, setDadosClimaFavoritos] = useState<any[]>([]);
 
   //  busca clima de todas as cidades favoritas
-  const buscarClimaDasCidadesFavoritas = async () => {
+  const buscarClimaDasCidadesFavoritas = useCallback(async () => {
     const climaDeFavoritos = await Promise.all(
       favoritos.map(async (cidade) => {
         const clima = await buscarClima(cidade);
@@ -25,13 +25,13 @@ const CidadesFavoritas: React.FC<CidadesFavoritasProps> = ({ favoritos, setFavor
       })
     );
     setDadosClimaFavoritos(climaDeFavoritos);
-  };
+  }, [favoritos]); // Adicionando 'favoritos' como dependência
 
   useEffect(() => {
     if (favoritos.length > 0) {
       buscarClimaDasCidadesFavoritas();
     }
-  }, [favoritos]);
+  }, [favoritos, buscarClimaDasCidadesFavoritas]); // Adicionando 'buscarClimaDasCidadesFavoritas' nas dependências
 
   // remove cidade dos favoritos
   const removerFavorito = (cidade: string) => {
@@ -100,20 +100,20 @@ const CidadesFavoritas: React.FC<CidadesFavoritasProps> = ({ favoritos, setFavor
                     </Box>
                   </CardContent>
                   <Box sx={{ padding: 0.5, textAlign: "center" }}> {/* Menor padding para o botão */}
-                  <Button
-  onClick={() => removerFavorito(cidadeClima.nome)}
-  sx={{
-    color: "#e57373", 
-    fontSize: "0.8rem", 
-    textTransform: "none", 
-    display: "flex",  
-    alignItems: "center",  
-    '&:hover': { backgroundColor: "#1976d2", color: "#fff" },
-  }}
->
-  <FaHeart size={16} style={{ marginRight: 6, color: "#dc004e" }} /> {/* Cor do coração ajustada para #dc004e */}
-  Remover
-</Button>
+                    <Button
+                      onClick={() => removerFavorito(cidadeClima.nome)}
+                      sx={{
+                        color: "#e57373", 
+                        fontSize: "0.8rem", 
+                        textTransform: "none", 
+                        display: "flex",  
+                        alignItems: "center",  
+                        '&:hover': { backgroundColor: "#1976d2", color: "#fff" },
+                      }}
+                    >
+                      <FaHeart size={16} style={{ marginRight: 6, color: "#dc004e" }} /> {/* Cor do coração ajustada para #dc004e */}
+                      Remover
+                    </Button>
                   </Box>
                 </Card>
               </Grid>
