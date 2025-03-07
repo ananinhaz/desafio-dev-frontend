@@ -72,7 +72,7 @@ const CidadesFavoritas: React.FC<CidadesFavoritasProps> = ({ favoritos, setFavor
                 <Card sx={{
                   marginBottom: 1,
                   boxShadow: 2,
-                  borderRadius: '8px', // Borda menor
+                  borderRadius: '8px', 
                   backgroundColor: "rgba(30, 136, 229, 0.3)",
                   '&:hover': { transform: 'scale(1.03)' },
                 }}>

@@ -15,6 +15,7 @@ const CardTempo: React.FC<CardTempoProps> = ({ favoritos, setFavoritos }) => {
   const [dadosClima, setDadosClima] = useState<any>(null);
   const [previsao, setPrevisao] = useState<any>([]);
   const [carregando, setCarregando] = useState<boolean>(false);
+  const [cidadePesquisada, setCidadePesquisada] = useState<boolean>(false); 
 
   const buscarClimaCidade = async () => {
     setCarregando(true);
@@ -23,6 +24,7 @@ const CardTempo: React.FC<CardTempoProps> = ({ favoritos, setFavoritos }) => {
       setDadosClima(clima);
       const previsaoFiltrada = clima.list.filter((item: any, index: number) => index % 8 === 0).slice(0, 3);
       setPrevisao(previsaoFiltrada);
+      setCidadePesquisada(true); 
     } catch (error) {
       alert("Cidade não encontrada! Verifique o nome digitado.");
     } finally {
@@ -65,6 +67,7 @@ const CardTempo: React.FC<CardTempoProps> = ({ favoritos, setFavoritos }) => {
 
   return (
     <Box sx={{ padding: 2, backgroundColor: "transparent", maxWidth: "800px", margin: "0 auto" }}>
+      {/* Campo de Pesquisa e Botão - Sempre visível */}
       <Typography
         variant="h5"
         gutterBottom
@@ -75,10 +78,9 @@ const CardTempo: React.FC<CardTempoProps> = ({ favoritos, setFavoritos }) => {
         Previsão do Tempo
       </Typography>
 
-      {/* Campo de Pesquisa e Botão */}
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 2 }}>
         <TextField
-          label="Cidade"
+          label="Digite a cidade"
           value={cidade}
           onChange={(e) => setCidade(e.target.value)}
           variant="outlined"
@@ -102,12 +104,13 @@ const CardTempo: React.FC<CardTempoProps> = ({ favoritos, setFavoritos }) => {
         </Button>
       </Box>
 
-      {/* Card de Clima Atual */}
-      <Box sx={{ backgroundColor: "#1565c0", borderRadius: '10px', padding: 1, boxShadow: 2, marginTop: 2 }}>
-        {dadosClima && !carregando && (
+      {/* Se cidadePesquisada for true mostra os dados do clima */}
+      {dadosClima && cidadePesquisada && (
+        <Box sx={{ backgroundColor: "#1565c0", borderRadius: '10px', padding: 1, boxShadow: 2, marginTop: 2 }}>
+          {/* Card de Clima Atual */}
           <Grid container spacing={1} justifyContent="center">
             <Grid item xs={12} sm={6}>
-              <Card sx={{ boxShadow: 2, borderRadius: '10px', backgroundColor: "rgba(30, 136, 229, 0.3)", '&:hover': { transform: 'scale(1.03)' } }}>
+              <Card sx={{ boxShadow: 2, borderRadius: '10px', backgroundColor: "rgba(30, 136, 229, 0.3)" }}>
                 <CardContent>
                   <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold" }}>
                     Clima em {dadosClima.city.name}
@@ -128,14 +131,12 @@ const CardTempo: React.FC<CardTempoProps> = ({ favoritos, setFavoritos }) => {
                         <FaTemperatureLow size={16} color="#64b5f6" />
                         <Typography variant="body2" sx={{ color: "#fff", marginLeft: 1 }}>Mín: {dadosClima.list[0].main.temp_min}°C</Typography>
                       </Box>
-                      {/* Vento e Precipitação */}
                       <Box sx={{ display: "flex", alignItems: "center", marginBottom: 0.5 }}>
                         <FaWind size={16} color="#fff" />
                         <Typography variant="body2" sx={{ color: "#fff", marginLeft: 1 }}>
                           Vento: {dadosClima.list[0].wind.speed} m/s
                         </Typography>
                       </Box>
-                      {/* Precipitação (verifique se o campo existe) */}
                       {dadosClima.list[0].rain ? (
                         <Box sx={{ display: "flex", alignItems: "center", marginBottom: 0.5 }}>
                           <WiRain size={16} color="#fff" />
@@ -155,77 +156,70 @@ const CardTempo: React.FC<CardTempoProps> = ({ favoritos, setFavoritos }) => {
                   </Grid>
                 </CardContent>
                 <CardActions>
-  <Button
-    onClick={favoritos.includes(dadosClima.city.name) ? removerDosFavoritos : adicionarAosFavoritos}
-    sx={{
-      margin: "0 auto",
-      display: "flex",  
-      alignItems: "center", 
-      color: "#e57373", 
-      fontWeight: "normal", 
-      textTransform: "none",
-      '&:hover': {
-        backgroundColor: "#1976d2",
-        color: "#fff",
-      },
-    }}
-  >
-    {favoritos.includes(dadosClima.city.name) ? (
-      <FaHeart size={20} style={{ marginRight: 8, color: '#dc004e' }} /> 
-    ) : (
-      <FaRegHeart size={20} style={{ marginRight: 8, color: '#dc004e' }} />
-    )}
-    {favoritos.includes(dadosClima.city.name) ? 'Remover' : 'Adicionar aos favoritos'}
-  </Button>
-</CardActions>
+                  <Button
+                    onClick={favoritos.includes(dadosClima.city.name) ? removerDosFavoritos : adicionarAosFavoritos}
+                    sx={{
+                      margin: "0 auto",
+                      display: "flex",
+                      alignItems: "center",
+                      color: "#e57373",
+                      fontWeight: "normal",
+                      textTransform: "none",
+                      '&:hover': { backgroundColor: "#1976d2", color: "#fff" },
+                    }}
+                  >
+                    {favoritos.includes(dadosClima.city.name) ? (
+                      <FaHeart size={20} style={{ marginRight: 8, color: '#dc004e' }} />
+                    ) : (
+                      <FaRegHeart size={20} style={{ marginRight: 8, color: '#dc004e' }} />
+                    )}
+                    {favoritos.includes(dadosClima.city.name) ? 'Remover' : 'Adicionar aos favoritos'}
+                  </Button>
+                </CardActions>
               </Card>
             </Grid>
           </Grid>
-        )}
 
-        {/* Cards de Previsão */}
-<Box sx={{ marginTop: 2 }}>
-  {/* Título para a seção de previsão */}
-  <Typography
-    variant="h6"
-    sx={{
-      color: "#fff",
-      fontWeight: "bold",
-      textAlign: "center",
-      marginBottom: 2, 
-    }}
-  >
-    Previsão para os próximos dias
-  </Typography>
-  {previsao.length > 0 && (
-    <Grid container spacing={1} justifyContent="center">
-      {previsao.map((dia: any, index: number) => (
-        <Grid item xs={12} sm={4} key={index}>
-          <Card sx={{ boxShadow: 2, borderRadius: '10px', backgroundColor: "rgba(30, 136, 229, 0.3)", '&:hover': { transform: 'scale(1.03)' } }}>
-            <CardContent>
-              <Typography variant="body2" sx={{ fontWeight: 600, color: "#fff" }}>
-                {new Date(dia.dt * 1000).toLocaleDateString("pt-BR")}
-              </Typography>
-              {getClimaIcone(dia.weather[0].description)}
-              <Typography variant="body2" sx={{ color: "#fff" }}>
-                <FaTemperatureHigh /> {dia.main.temp}°C
-              </Typography>
-              <Typography variant="body2" sx={{ color: "#fff" }}>
-                <FaWind /> {dia.wind.speed} m/s
-              </Typography>
-              <Typography variant="body2" sx={{ color: "#fff" }}>
-                <WiCloudy /> {dia.weather[0].description}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-      ))}
-    </Grid>
-  )}
-</Box>
-      </Box>
+          {/* Cards de Previsão */}
+          <Box sx={{ marginTop: 2 }}>
+            <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold", textAlign: "center", marginBottom: 2 }}>
+              Previsão para os próximos dias
+            </Typography>
+            {previsao.length > 0 && (
+              <Grid container spacing={1} justifyContent="center">
+                {previsao.map((dia: any, index: number) => (
+                  <Grid item xs={12} sm={4} key={index}>
+                    <Card sx={{ boxShadow: 2, borderRadius: '10px', backgroundColor: "rgba(30, 136, 229, 0.3)" }}>
+                      <CardContent>
+                        <Typography variant="body2" sx={{ fontWeight: 600, color: "#fff" }}>
+                          {new Date(dia.dt * 1000).toLocaleDateString("pt-BR")}
+                        </Typography>
+                        {getClimaIcone(dia.weather[0].description)}
+                        <Typography variant="body2" sx={{ color: "#fff" }}>
+                          <FaTemperatureHigh /> {dia.main.temp}°C
+                        </Typography>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <FaTemperatureHigh size={16} color="#ff7043" />
+                          <Typography variant="body2" sx={{ color: "#fff", marginLeft: 1 }}>
+                            Máx: {dia.main.temp_max}°C
+                          </Typography>
+                        </Box>
+                        <Box sx={{ display: "flex", alignItems: "center" }}>
+                          <FaTemperatureLow size={16} color="#64b5f6" />
+                          <Typography variant="body2" sx={{ color: "#fff", marginLeft: 1 }}>
+                            Mín: {dia.main.temp_min}°C
+                          </Typography>
+                        </Box>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            )}
+          </Box>
+        </Box>
+      )}
 
-      {/* Cards de Cidades Favoritas */}
       <CidadesFavoritas favoritos={favoritos} setFavoritos={setFavoritos} />
     </Box>
   );
