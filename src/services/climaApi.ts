@@ -10,7 +10,7 @@ export const buscarClima = async (cidade: string) => {
         q: cidade,
         units: "metric",
         lang: "pt",
-        appid: "7656c8fbf58e38ccf46a26ac452d9eec",
+        appid: API_KEY,
       },
     });
 

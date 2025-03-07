@@ -6,18 +6,19 @@ import Home from './pages/Home';
 
 const queryClient = new QueryClient();
 
-const App = () => {
-  // carrega os favoritos do localstorage
+const App: React.FC = () => {
+  // carrega os favoritos do localStorage ao iniciar
   const [favoritos, setFavoritos] = useState<string[]>(() => {
     const savedFavoritos = localStorage.getItem('favoritos');
     return savedFavoritos ? JSON.parse(savedFavoritos) : [];
   });
 
-  // salva os favoritos sempre que tiver alteracao
+  // salva os favoritos sempre que houver alteração
   useEffect(() => {
-    localStorage.setItem('favoritos', JSON.stringify(favoritos));
-  }, [favoritos]);
-
+    if (favoritos.length > 0) {
+      localStorage.setItem('favoritos', JSON.stringify(favoritos));
+    }
+  }, [favoritos]);  
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>

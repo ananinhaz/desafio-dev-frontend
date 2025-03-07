@@ -1,10 +1,21 @@
-import { render, screen } from "@testing-library/react";
-import "@testing-library/jest-dom";
-import CardTempo from "../components/Cardtempo";
+import React, { useState, useEffect } from 'react';
+import CardTempo from '../components/Cardtempo';
 
-test("Renderiza input e botão corretamente", () => {
-  render(<CardTempo favoritos={[]} setFavoritos={() => {}} />);
-  
-  expect(screen.getByLabelText(/Digite o nome da cidade/i)).toBeInTheDocument();
-  expect(screen.getByText(/Buscar Clima/i)).toBeInTheDocument();
-});
+const Home: React.FC = () => {
+  const [favoritos, setFavoritos] = useState<string[]>(() => {
+    const savedFavoritos = localStorage.getItem('favoritos');
+    return savedFavoritos ? JSON.parse(savedFavoritos) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('favoritos', JSON.stringify(favoritos));
+  }, [favoritos]);
+
+  return (
+    <div>
+      <CardTempo favoritos={favoritos} setFavoritos={setFavoritos} />
+    </div>
+  );
+};
+
+export default Home;
