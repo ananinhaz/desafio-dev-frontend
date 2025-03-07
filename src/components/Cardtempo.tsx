@@ -63,8 +63,8 @@ const CardTempo: React.FC<CardTempoProps> = ({ favoritos, setFavoritos }) => {
       default:
         return <WiCloudy size={30} />;
     }
-  };  
-
+  };
+  
   return (
     <Box sx={{ padding: 2, backgroundColor: "transparent", maxWidth: "800px", margin: "0 auto" }}>
       {/* Campo de Pesquisa e Botão - Sempre visível */}
