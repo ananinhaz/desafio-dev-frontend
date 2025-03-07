@@ -48,7 +48,7 @@ const CardTempo: React.FC<CardTempoProps> = ({ favoritos, setFavoritos }) => {
     }
   };
 
-  const getClimaIcone = (descricao: string) => {
+  const getClimaIcone = (descricao: string): JSX.Element => {
     switch (descricao.toLowerCase()) {
       case "clear sky":
         return <WiDaySunny size={30} />;
@@ -63,7 +63,7 @@ const CardTempo: React.FC<CardTempoProps> = ({ favoritos, setFavoritos }) => {
       default:
         return <WiCloudy size={30} />;
     }
-  };
+  };  
 
   return (
     <Box sx={{ padding: 2, backgroundColor: "transparent", maxWidth: "800px", margin: "0 auto" }}>
